@@ -5,7 +5,46 @@ __pycache__/
 
 # C extensions
 *.so
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
+# Models
+*.pkl
+*.joblib
+*.h5
+*.pth
+
+# Data
+*.csv
+*.json
+*.db
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Cloud
+.env
+*.env.local
 # Distribution / packaging
 .Python
 build/

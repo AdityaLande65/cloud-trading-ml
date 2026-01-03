@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Cloud ML Trading</title>
+    <style>
+        body {
+            width: 350px;
+            height: 500px;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+        }
+        
+        .container {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-sizing: border-box;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .header h2 {
+            margin: 0 0 5px 0;
+            color: #60a5fa;
+            font-size: 18px;
+        }
+        
+        .header .subtitle {
+            color: #94a3b8;
+            font-size: 12px;
+        }
+        
+        .status-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #334155;
+        }
+        
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        
+        .status-value {
+            color: #60a5fa;
+            font-weight: bold;
+        }
+        
+        .connected { color: #4ade80; }
+        .disconnected { color: #f87171; }
+        
+        .signal-card {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+            border: 2px solid;
+            transition: all 0.3s;
+        }
+        
+        .signal-buy { border-color: #4ade80; }
+        .signal-sell { border-color: #f87171; }
+        .signal-hold { border-color: #fbbf24; }
+        
+        .signal-text {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .signal-confidence {
+            font-size: 18px;
+            color: #cbd5e1;
+        }
+        
+        .signals-history {
+            flex-grow: 1;
+            overflow-y: auto;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #334155;
+        }
+        
+        .signals-title {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+        
+        .signal-item {
+            padding: 8px 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            background: rgba(51, 65, 85, 0.5);
+            font-size: 12px;
+        }
+        
+        .signal-item-buy { border-left: 3px solid #4ade80; }
+        .signal-item-sell { border-left: 3px solid #f87171; }
+        .signal-item-hold { border-left: 3px solid #fbbf24; }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button.danger {
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+        }
+        
+        button.success {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+        }
+        
+        .server-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #334155;
+            border-radius: 5px;
+            background: #1e293b;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 11px;
+            color: #64748b;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>🌐 Cloud ML Trading</h2>
+            <div class="subtitle">Real-time AI Trading Signals</div>
+        </div>
+        
+        <div class="status-card">
+            <div class="status-row">
+                <span>Status:</span>
+                <span id="status" class="status-value disconnected">Disconnected</span>
+            </div>
+            <div class="status-row">
+                <span>Predictions:</span>
+                <span id="predictions" class="status-value">0</span>
+            </div>
+            <div class="status-row">
+                <span>Model:</span>
+                <span id="model" class="status-value">v1.0</span>
+            </div>
+            <div class="server-input">
+                <input type="text" id="serverUrl" placeholder="ws://your-render-url.onrender.com/ws">
+                <button id="saveUrl" class="success">Save</button>
+            </div>
+        </div>
+        
+        <div id="signalCard" class="signal-card signal-hold">
+            <div style="font-size: 14px; color: #94a3b8;">Current Signal</div>
+            <div id="signalText" class="signal-text">HOLD</div>
+            <div id="signalConfidence" class="signal-confidence">0.0%</div>
+            <div id="signalTime" style="font-size: 11px; color: #64748b;">--:--:--</div>
+        </div>
+        
+        <div class="signals-history">
+            <div class="signals-title">Recent Signals</div>
+            <div id="signalsList">
+                <!-- Signals will be added here -->
+                <div class="signal-item signal-item-hold">
+                    <div>Waiting for signals...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="connectBtn">Connect</button>
+            <button id="testBtn" class="success">Test Signal</button>
+            <button id="uploadBtn" class="danger">Upload</button>
+        </div>
+        
+        <div class="footer">
+            Cloud ML Server • Free Forever<br>
+            <span id="version">v1.0</span>
+        </div>
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>

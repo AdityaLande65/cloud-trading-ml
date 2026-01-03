@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Cloud ML Trading Signals",
+  "version": "1.0",
+  "description": "Real-time ML trading signals from cloud",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://www.tradingview.com/*",
+    "https://*.onrender.com/*",
+    "http://localhost:8000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Cloud Trading Signals"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.tradingview.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["injection.js"],
+      "matches": ["https://www.tradingview.com/*"]
+    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

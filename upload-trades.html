@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Upload Historical Trades</h2>
+    <input type="file" id="fileInput" accept=".csv,.json">
+    <button onclick="upload()">Upload to Cloud ML</button>
+    
+    <script>
+    async function upload() {
+        const file = document.getElementById('fileInput').files[0];
+        if (!file) return alert('Select a file');
+        
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            // Parse your FINAL_V7 CSV
+            const text = e.target.result;
+            const lines = text.split('\n');
+            const headers = lines[0].split(',');
+            
+            const trades = [];
+            for (let i = 1; i < Math.min(lines.length, 6001); i++) {
+                const values = lines[i].split(',');
+                const trade = {};
+                headers.forEach((h, idx) => trade[h] = values[idx]);
+                trades.push(trade);
+            }
+            
+            // Upload to your Render server
+            const response = await fetch('YOUR_RENDER_URL/upload/historical', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(trades)
+            });
+            
+            const result = await response.json();
+            alert(`Uploaded ${trades.length} trades: ${result.message}`);
+        };
+        reader.readAsText(file);
+    }
+    </script>
+</body>
+</html>
